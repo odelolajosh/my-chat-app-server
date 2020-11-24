@@ -1,10 +1,9 @@
-const db = require('../database/user')
 const dbHandler = require('../handler/db-handler')
 const jwt = require('jsonwebtoken')
 
 exports.getAllUsers = async (req, res, next) => {
-  const users = await db.getAllUser()
-  res.status(400).json({ status: 'success', users: users })
+  const users = await dbHandler.getAllUsers()
+  res.status(400).json({ status: 'success', users })
 }
 
 exports.getUserById = async (req, res, next) => {

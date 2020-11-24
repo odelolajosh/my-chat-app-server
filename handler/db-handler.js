@@ -6,6 +6,17 @@ const mongoose = require('mongoose')
 const Message = require('../model/message')
 
 class DbHandler {
+  getAllUsers () {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const users = await User.find({ }, 'username online _id email imageUrl chatList')
+        resolve(users)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
+
   getUserById (userId) {
     return new Promise(async (resolve, reject) => {
       try {
