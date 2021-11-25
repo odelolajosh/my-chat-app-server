@@ -1,7 +1,7 @@
-const router = require("express").Router();
-const ctrl = require("../controllers/message");
-const auth = require("../config/auth-config");
+const router = require('express').Router()
+const ctrl = require('../controllers/message')
+const auth = require('../config/auth-config')
 
-router.post("/", ctrl.getAllMessagesByUsers);
+router.post('/', auth, ctrl.getAllMessagesByUsers)
 
-module.exports = router;
+module.exports = router

@@ -34,7 +34,7 @@ class DbHandler {
         const hash = await bcrypt.hash(password, 10)
         const user = new User({ username, email, password: hash })
         await user.save()
-        resolve({ userId: user._id })
+        resolve({ userId: user._id, imageUrl: user.imageUrl, username: user.username })
       } catch (err) {
         reject(err)
       }
@@ -52,7 +52,7 @@ class DbHandler {
         if (!valid) {
           throw new Error('Password mismatch')
         }
-        resolve({ userId: user._id })
+        resolve({ userId: user._id, imageUrl: user.imageUrl, username: user.username })
       } catch (err) {
         reject(err)
       }
@@ -73,8 +73,8 @@ class DbHandler {
   getUserInfo ({ userId }) {
     return new Promise(async (resolve, reject) => {
       try {
-        const { username, online, socketId, _id } = await User.findById(userId)
-        resolve({ _id, username, online, socketId })
+        const { username, online, socketId, _id, imageUrl } = await User.findById(userId)
+        resolve({ _id, username, online, socketId, imageUrl })
       } catch (err) {
         reject(err)
       }
@@ -131,11 +131,15 @@ class DbHandler {
         const totalPages = Math.ceil(count / limit)
 
         // validate page
-        if (!page || page === 'null') {
+        page = parseInt(page)
+        if (!page || page === NaN) {
           page = totalPages
         }
 
-        const messages = await Message.find(MessageObjectCondition).sort({ date: 1 }).limit(limit * 1).skip((page - 1) * limit)
+        const messages = await Message.find(MessageObjectCondition)
+          .sort({ date: 1 })
+          .limit(limit * 1)
+          .skip(Math.max((page - 1), 0) * limit)
 
         resolve({
           messages,

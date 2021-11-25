@@ -28,15 +28,16 @@ class Server {
     try {
       await db.onConnect()
       this.includeRoutes()
+
+      const port = process.env.PORT || 4001
+      const host = process.env.HOST || 'localhost'
+
+      // this.server.listen(port, host, () => console.log(`listening on http://${host}:${port}`))
+      this.server.listen(port)
     } catch (err) {
       console.log(err)
+      process.exit(0)
     }
-
-    const port = process.env.PORT || 4001
-    const host = process.env.HOST || 'localhost'
-
-    // this.server.listen(port, host, () => console.log(`listening on http://${host}:${port}`))
-    this.server.listen(port);
   }
 }
 

@@ -15,14 +15,14 @@ exports.getUserById = async (req, res, next) => {
 exports.createUser = async (req, res, next) => {
   const { username, email, password } = req.body
   try {
-    const { userId } = await dbHandler.createUser(username, email, password)
+    const { userId, imageUrl, username } = await dbHandler.createUser(username, email, password)
     console.log(userId)
     const token = jwt.sign(
       { userId: userId },
       process.env.TOKEN_ENCRYPT_KEY,
       { expiresIn: '24h' }
     )
-    return res.status(201).json({ status: 'success', userId: userId, token })
+    return res.status(201).json({ status: 'success', userId: userId, token, imageUrl, username })
   } catch (e) {
     return res.status(404).json({ status: 'error', error: e || 'Could not create user' })
   }
@@ -31,13 +31,13 @@ exports.createUser = async (req, res, next) => {
 exports.loginUser = async (req, res, next) => {
   const { username, password } = req.body || {}
   try {
-    const { userId } = await dbHandler.loginUser(username, password)
+    const { userId, imageUrl } = await dbHandler.loginUser(username, password)
     const token = jwt.sign(
       { userId: userId },
       process.env.TOKEN_ENCRYPT_KEY,
       { expiresIn: '24h' }
     )
-    return res.status(201).json({ status: 'success', userId: userId, token })
+    return res.status(201).json({ status: 'success', userId: userId, token, imageUrl, username })
   } catch (e) {
     return res.status(404).json({ status: 'error', error: e || 'Could not login' })
   }
@@ -52,8 +52,8 @@ exports.refreshToken = async (req, res) => {
     if (id !== userId) {
       throw new Error('Invalid user ID')
     } else {
-      await dbHandler.getUserInfo({ userId })
-      return res.status(201).json({ status: 'success', userId: id, token })
+      const { username, imageUrl, _id } = await dbHandler.getUserInfo({ userId })
+      return res.status(201).json({ status: 'success', userId: _id, token, username, imageUrl })
     }
   } catch (error) {
     res.status(401).json({ error })
