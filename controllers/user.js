@@ -13,9 +13,9 @@ exports.getUserById = async (req, res, next) => {
 }
 
 exports.createUser = async (req, res, next) => {
-  const { username, email, password } = req.body
+  const { username: name, email, password } = req.body
   try {
-    const { userId, imageUrl, username } = await dbHandler.createUser(username, email, password)
+    const { userId, imageUrl, username } = await dbHandler.createUser(name, email, password)
     console.log(userId)
     const token = jwt.sign(
       { userId: userId },
